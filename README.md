@@ -1,16 +1,15 @@
-# 🌊 Flood Intelligence API
+# 🤖 AI Scraper
 
-AI-powered API to extract flood-related intelligence from web sources using LLMs and web scraping.
+An intelligent API that searches the web, scrapes content, and extracts key information using LLMs.
 
 ![Workflow](image.png)
 
 ## ✨ Features
 
-- **AI-Powered Extraction** — Uses OpenRouter/Groq LLMs for intelligent analysis
-- **Web Scraping** — Headless browser scraping via crawl4ai
-- **Smart Search** — Auto-rephrases queries for better results
-- **Structured Output** — Returns organized flood intelligence data
-- **Multi-Model Support** — Switch between free LLM models
+- **Google Search Integration** — Find relevant URLs via Custom Search API
+- **Smart Web Scraping** — Headless browser extraction using crawl4ai
+- **LLM-Powered Analysis** — Extract insights with Groq or OpenRouter models
+- **RESTful API** — Clean FastAPI endpoints with auto-documentation
 
 ---
 
@@ -21,57 +20,65 @@ AI-powered API to extract flood-related intelligence from web sources using LLMs
 pip install -r requirements.txt
 playwright install chromium
 
-# Configure API key
-# Edit .env and add: OPENROUTER_API_KEY=your_key
+# Configure environment
+cp .env.example .env
+# Edit .env with your API keys
 
-# Run server
+# Start server
 python main.py
 ```
 
-Server starts at: `http://127.0.0.1:5001`
+**Server:** `http://127.0.0.1:5001`
 
 ---
 
-## 📡 API Usage
+## 📡 API Endpoints
 
-### Search for Flood Intelligence
+### Search & Extract
+Search the web and extract information from results.
 
 ```bash
-curl -X POST http://127.0.0.1:5001/api/search \
-  -H "Content-Type: application/json" \
-  -d '{"query": "flood news chennai 2024", "max_urls": 5}'
+POST /api/search
 ```
 
-### Extract from Specific URLs
+```json
+{
+  "query": "latest tech news 2024",
+  "max_urls": 5,
+  "model": "groq/compound-mini"
+}
+```
+
+### Extract from URLs
+Extract information from specific URLs.
 
 ```bash
-curl -X POST http://127.0.0.1:5001/api/extract \
-  -H "Content-Type: application/json" \
-  -d '{"urls": ["https://example.com/news"]}'
+POST /api/extract
+```
+
+```json
+{
+  "urls": ["https://example.com/article"],
+  "model": "groq/compound-mini"
+}
 ```
 
 ### Health Check
-
 ```bash
-curl http://127.0.0.1:5001/api/health
+GET /api/health
 ```
 
 ---
 
-## 📋 Response Structure
+## 📋 Response Format
 
 ```json
 {
   "urls_processed": 3,
-  "summary": "Extracted intelligence...",
-  "intelligence": {
-    "flood_status": { "severity": "moderate", "trend": "stable" },
-    "affected_areas": [...],
-    "key_findings": [...],
-    "recommendations": [...]
-  },
-  "model_used": "meta-llama/llama-3.2-3b-instruct:free",
-  "processing_time": 12.5
+  "urls": ["https://..."],
+  "summary": "Key findings and insights...",
+  "model_used": "groq/compound-mini",
+  "processing_time": 8.5
 }
 ```
 
@@ -79,51 +86,70 @@ curl http://127.0.0.1:5001/api/health
 
 ## ⚙️ Configuration
 
-Create a `.env` file:
+Create `.env` from `.env.example`:
 
 ```env
-# Required
-OPENROUTER_API_KEY=your_key_here
+# LLM Provider: "groq" or "openrouter"
+LLM_PROVIDER=groq
 
-# Optional
-LLM_PROVIDER=groq          # or "openrouter"
+# API Keys
+GROQ_API_KEY=your_groq_key
+OPENROUTER_API_KEY=your_openrouter_key
+
+# Google Custom Search
+GOOGLE_SEARCH_API_KEY=your_google_key
+GOOGLE_SEARCH_ENGINE_ID=your_engine_id
+
+# Settings
 HEADLESS_MODE=true
 SCRAPE_TIMEOUT=30
-MAX_URLS_PER_QUERY=5
 ```
+
+### Supported Models
+
+| Provider | Models |
+|----------|--------|
+| Groq | `groq/compound-mini`, `moonshotai/kimi-k2-instruct-0905`, `qwen/qwen3-32b` |
+| OpenRouter | `mistralai/mistral-7b-instruct:free`, `meta-llama/llama-3.2-3b-instruct:free` |
 
 ---
 
 ## 📁 Project Structure
 
 ```
-flood_intel_api/
-├── main.py           # Entry point
-├── config.py         # Settings
-├── api/              # FastAPI routes
-├── core/             # Search, scrape, extract logic
-├── answers/          # Saved responses (JSON)
-└── logs/             # Application logs
+├── main.py           # FastAPI application entry
+├── config.py         # Environment configuration
+├── api/
+│   ├── routes.py     # API endpoints
+│   └── schemas.py    # Request/response models
+├── core/
+│   ├── search.py     # Google Custom Search API
+│   ├── scraper.py    # crawl4ai web scraper
+│   ├── extractor.py  # LLM content extraction
+│   └── llm_client.py # Groq/OpenRouter client
+├── utils/            # Logging utilities
+└── answers/          # Saved API responses
 ```
 
 ---
 
-## 📖 Documentation
+## 📖 Docs
 
-- **Interactive Docs**: http://127.0.0.1:5001/docs
-- **Detailed Guide**: See [DOC.md](DOC.md)
+- **Swagger UI:** http://127.0.0.1:5001/docs
+- **ReDoc:** http://127.0.0.1:5001/redoc
 
 ---
 
 ## 🛠️ Tech Stack
 
-- **FastAPI** — Web framework
-- **crawl4ai** — Web scraping
-- **OpenRouter / Groq** — LLM providers
-- **Playwright** — Browser automation
+| Component | Technology |
+|-----------|------------|
+| Framework | FastAPI |
+| Scraping | crawl4ai + Playwright |
+| Search | Google Custom Search API |
+| LLM | Groq / OpenRouter |
 
 ---
+## 🤝 Contact
 
-## 📝 License
-
-MIT
+For collaboration, please contact **Chandan Kumar** at [chandankr014@gmail.com](mailto:chandankr014@gmail.com).
